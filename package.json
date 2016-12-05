@@ -1,0 +1,23 @@
+{
+  "name": "epic-stream",
+  "version": "1.0.0",
+  "description": "Polymer implementation of xstream",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build-deps": "rollup -c --environment INCLUDE_DEPS=true"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^2.0.10",
+    "xstream": "^9.0.0"
+  },
+  "dependencies": {
+    "rollup": "^0.36.4",
+    "rollup-plugin-babel": "^2.6.1",
+    "rollup-plugin-commonjs": "^5.0.5",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "rxjs-es": "^5.0.0-beta.12"
+  }
+}

@@ -1,0 +1,36 @@
+<link rel="import"
+	href="../../polymer/polymer.html">
+<link rel="import"
+	href="../../epic-polyfills/babel-polyfill.html">
+<link rel="import"
+	href="epic-stream-behavior.html">
+
+<!--
+`epic-location`
+watches address bar for changes
+
+@demo demo/index.html
+-->
+
+<dom-module id="epic-stream">
+	<template>
+	</template>
+	<script>
+		Polymer({
+			is: 'epic-stream',
+			behaviors: [Polymer.Epic.StreamBehavior],
+			properties: {
+				sampleString: {
+					type: String,
+					value: '',
+					notify: true
+				},
+				sampleBoolean: {
+					type: Boolean,
+					value: false,
+					notify: true
+				}
+			}
+		})
+	</script>
+</dom-module>

@@ -1,0 +1,16 @@
+{
+  "name": "epic-stream",
+  "description": "Polymer implementation of xstream",
+  "main": "epic-stream.html",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.4.0",
+    "epic-polyfills": "epic-elements/epic-polyfills",
+    "Rx": "https://unpkg.com/@reactivex/rxjs/dist/global/Rx.js"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
+    "web-component-tester": "^4.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
+  }
+}

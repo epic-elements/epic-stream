@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport"
+			content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+		<title>epic-stream test</title>
+
+		<script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+		<script src="../../web-component-tester/browser.js"></script>
+
+		<link rel="import"
+			href="../epic-stream.html">
+	</head>
+
+	<body>
+		<test-fixture id="basic">
+			<template>
+				<epic-stream></epic-stream>
+			</template>
+		</test-fixture>
+
+		<script>
+			suite('epic-stream', function() {
+				test('instantiating the element works', function() {
+					var element = fixture('basic');
+					assert.equal(element.is, 'epic-stream');
+				});
+			});
+
+			suite('epic-stream-behaviors', function() {
+				test('_createStreamFromPropertyChanges returns a stream', function() {
+
+					var element = fixture('basic');
+					assert.equal(element.is, 'epic-stream');
+				});
+			});
+		</script>
+	</body>
+
+</html>

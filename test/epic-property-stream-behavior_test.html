@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport"
+			content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+		<title>epic-stream test</title>
+
+		<script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+		<script src="../../web-component-tester/browser.js"></script>
+		<link rel="import"
+			href="../src/xstream.html">
+		<!-- <link rel="import"
+			href="../helpers/test.html"> -->
+		<link rel="import"
+			href="../src/epic-stream-from-properties-behavior.html">
+	</head>
+
+	<body>
+		<dom-module id="test-checked">
+			<template>
+			</template>
+			<script>
+				HTMLImports.whenReady(function() {
+					Polymer({
+						is: 'test-element',
+						behaviors: [
+							Polymer.Epic.StreamFromPropertiesBehavior
+						],
+						properties: {
+							prop1: {
+								type: String,
+								value: '',
+								notify: true
+							},
+							prop2: {
+								type: String,
+								value: 'test',
+								notify: true
+							},
+							prop3: {
+								type: Number,
+								value: 5,
+								notify: true,
+							},
+							prop4: {
+								type: Object,
+								value: function() {
+									return {}
+								},
+								notify: true
+							},
+							prop5: {
+								type: Array,
+								value: function() {
+									return []
+								},
+								notify: true
+							},
+							prop6: {
+								type: Boolean,
+								value: false,
+								notify: true
+							}
+						}
+					});
+				});
+			</script>
+		</dom-module>
+		<test-fixture id="basic">
+			<template>
+				<test-element></test-element>
+			</template>
+		</test-fixture>
+
+		<script>
+			// developer can create a stream that emits whenever a Polymer elements properties change.
+
+			// For each unit test you write,
+			// answer these questions:
+			/**
+				suite('1. What component are you testing?', function() {
+				test('2. What aspect are you testing?', assert => {
+				  const expected = '4. What is the expected output?';
+				  const actual = '5. What is the actual output?';
+
+				  assert.equal(actual, expected,
+				    '3. What should the feature do?');
+
+				  assert.end();
+				});
+			})
+			*/
+
+			suite('_createStreamFromProperties()', function() {
+				var element;
+				var method;
+				var bevavior;
+				setup(function() {
+					element = fixture('basic');
+					behavior = Polymer.Epic.StreamFromPropertiesBehavior;
+					method = behavior._createStreamFromProperies;
+				});
+				test('output type', function() {
+					expect(method(element)).to.be.an.instanceof(Object);
+				});
+				test('emits initial property values', function(done) {
+					const stream = method(element).take(6);
+					let expected = [{
+						prop1: ''
+					}, {
+						prop2: 'test'
+					}, {
+						prop3: 5
+					}, {
+						prop4: {}
+					}, {
+						prop5: []
+					}, {
+						prop6: false
+					}];
+					stream.addListener({
+						next: function(x) {
+							console.log(x);
+							expect(x).to.be.deep.equal(expected.shift())
+						},
+						error: function(err) {
+							done(err)
+						},
+						complete: function() {
+							expect(expected.length).to.be.equal(0)
+							done();
+						},
+					});
+				});
+				test('emits property value on `{property}-changed` event', function(done) {
+					const stream = method(element)
+						.drop(6)
+						.take(2);
+					let expected = [{
+						prop3: 8
+					}, {
+						prop6: true
+					}];
+					stream.addListener({
+						next: function(x) {
+							console.log(x)
+							expect(x).to.be.deep.equal(expected.shift())
+						},
+						error: function(err) {
+							done(err)
+						},
+						complete: function() {
+							expect(expected.length).to.be.equal(0)
+							done();
+						},
+					});
+					element.set('prop3', 8);
+					element.set('prop6', true);
+				});
+			});
+		</script>
+	</body>
+
+</html>
