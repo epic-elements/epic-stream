@@ -101,7 +101,7 @@
 				setup(function() {
 					element = fixture('basic');
 					behavior = Polymer.Epic.StreamFromPropertiesBehavior;
-					method = behavior._createStreamFromProperies;
+					method = behavior._createStreamFromProperties;
 				});
 				test('output type', function() {
 					expect(method(element)).to.be.an.instanceof(Object);

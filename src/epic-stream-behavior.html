@@ -1,17 +1,23 @@
-<!-- <link rel="import"
-	href="epic-stream-from-lifecycle-callbacks-behavior.html"> -->
 <link rel="import"
-	href="epic-stream-from-properties-behavior.html">
+	href="xstream.html">
+<link rel="import"
+	href="../src/epic-stream-diagram-behavior.html">
 <script>
 	/**
 	 * Behavior that provides observable stream functions.
 	 * Built on top of xstream
 	 *
-	 * @polymerBehavior Epic.StreamBehavior
+	 * @polymerBehavior EpicStream.Behavior
 	 */
-	Polymer.Epic = Polymer.Epic || {};
-	Polymer.Epic.StreamBehavior = [
-		// Polymer.Epic.StreamFromLifecycleCallbacksBehavior,
-		Polymer.Epic.StreamFromPropertiesBehavior
+	Polymer.EpicStream = Polymer.EpicStream || {};
+	Polymer.EpicStream.BehaviorImpl = {
+		createPropertiesStream: function(...properties) {
+			let result$ = xs.of('a', 'b', 'a', 's', 'd', 'd');
+			return result$
+		}
+	};
+
+	Polymer.EpicStream.Behavior = [
+		Polymer.EpicStream.DiagramBehavior
 	];
 </script>

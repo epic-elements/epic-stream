@@ -14,22 +14,111 @@ watches address bar for changes
 
 <dom-module id="epic-stream">
 	<template>
+
+		<div id="frameGraph">[[frameGraph]]</div>
+		<div id="timeGraph">[[timeGraph]]</div>
+		<div id="emptyFrameGraph">[[emptyFrameGraph]]</div>
+		<div id="diagram"></div>
 	</template>
 	<script>
 		Polymer({
 			is: 'epic-stream',
-			behaviors: [Polymer.Epic.StreamBehavior],
+			behaviors: [Polymer.EpicStream.Behavior],
 			properties: {
-				sampleString: {
+				frameGraph: {
 					type: String,
-					value: '',
-					notify: true
+					notify: true,
+					value: ''
 				},
-				sampleBoolean: {
-					type: Boolean,
-					value: false,
-					notify: true
+				timeGraph: {
+					type: String,
+					notify: true,
+					value: ''
+				},
+				valueGraph: {
+					type: String,
+					notify: true,
+					value: ''
+				},
+				emptyFrameGraph: {
+					type: String,
+					notify: true,
+					value: ''
+				},
+
+
+				source: {
+					type: Object,
+					notify: true,
+					value: ''
+				},
+			},
+			ready: function() {
+				const timeUnit$ = xs.of(20);
+				const frame$ = timeUnit$
+					.map(v => xs.periodic(v))
+					.flatten()
+					.map(v => v + 1)
+					.take(10);
+				const time$ = frame$.map(v => v * 20);
+
+				const frameGraph$ = frame$
+					.fold((x, y) => x.concat([y]), [])
+					.map(v => v.join(''));
+
+				const timeGraph$ = time$
+					.fold((x, y) => x.concat([y]), [])
+					.map(v => v.join(''));
+
+				const emptyFrameGraph$ = frameGraph$
+					.map(v => '-')
+					.fold((x, y) => x.concat([y]), [])
+					.map(v => v.join(''));
+
+				const state$ = xs.combine(timeGraph$, time$, frameGraph$, timeUnit$, frame$, emptyFrameGraph$)
+					.map(v => ({
+						timeUnit: v[3],
+						time: v[1],
+						timeGraph: v[0],
+						frame: v[4],
+						frameGraph: v[2],
+						emptyFramesGraph: v[5]
+					}))
+					.remember();
+
+				// const 
+
+				// const source$ = xs
+				// 	.fromEvent(this, 'source-changed')
+				// 	.map(e => e.target.value);
+				// const event$ = source$
+				// 	.compose(xs
+				// 		.sampleCombine(time$))
+				// 	.map(v => ({
+				// 		[v[1]]: v[0]
+				// 	}))
+				// 
+
+				// 
+
+
+
+
+
+				this.state$ = state$.debug('state');
+			},
+			attached: function() {
+				this.listener = {
+					next: x => {
+						this._set_timeGraph.set(x.timeGraph)
+						this._set_frameGraph.set(x.frameGraph)
+						this._set_emptyFramesGraph.set(x.emptyFrameGraph)
+					}
 				}
+				this.state$.addListener(this.listener);
+			},
+			detached: function() {
+				this.state$.removeListener(this.listener);
 			}
 		})
 	</script>

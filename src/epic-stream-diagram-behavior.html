@@ -1,0 +1,75 @@
+<link rel="import"
+	href="../../polymer/polymer.html">
+<link rel="import"
+	href="xstream.html">
+<script>
+	/**
+	 * Creates an stream marble diagram
+	 *
+	 * @polymerBehavior EpicStream.DiagramBehavior
+	 */
+	Polymer.EpicStream = Polymer.EpicStream || {};
+	Polymer.EpicStream.DiagramBehavior = {
+		asDiagram: function(source$, options) {
+			// Sources
+			
+			
+			
+			const options$ = xs.of(options)
+				.filter(v => typeof v === 'object')
+				.startWith({});
+			const timeUnit$ = options$.map(o => o.timeUnit)
+				.filter(v => v)
+				.startWith(20);
+			const values$ = options$.map(o => o.values)
+				.filter(v => typeof v === 'object')
+				.startWith({});
+				
+			const minFrames$ = options$.map(o => o.minFrames)
+				.filter(v => v)
+				.startWith(20);
+			const maxFrames$ = options$.map(o => o.maxFrames)
+				.filter(v => v)
+				.startWith(60);
+				
+				
+			// const updateConfig$ = xs.combine(
+			// timeUnit$ values$ minFrames$ maxFrames$
+
+
+
+			// const updateConfig$ = xs.combine()
+			// 	.map() xs.of(options)
+			// 	.filter(v => v)
+			// 
+			// .filter(v => )
+			// 
+			// 
+			// xs.concat(defaults$, options$)
+			// .;
+			// 
+			// Array.apply(null, Array(6)).map(function(item, index) {
+			// 	return "ball_" + index;
+			// });
+			// 
+			// 
+			// const toArray = (a, v) => a.concat([v]);
+			// const foldToArray = (a, v) => a.concat([v]);
+			// 
+			// const toProperties = o => xs.of(Object.keys(o))
+			// 	.map(k => o[k])
+			// 	// (o|)
+			// 	.map(toProperties); // (tv|) {t:timeUnit,v:values}
+			// // const resultArray$ = source$.fold(reducer, []);
+			// 
+			// const action$ = xs.merge();
+			// const state$ = this.updateState(action$)
+			// 
+			// return resultArray$
+		},
+		updateState: function(action$) {
+			// let reducer = (acc, cur) => Object.assign({}, acc, cur)
+			// return action$.fold(reducer, {});
+		}
+	};
+</script>

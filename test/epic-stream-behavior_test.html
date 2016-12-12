@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport"
+			content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+		<title>epic-stream test</title>
+
+		<script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+		<script src="../../web-component-tester/browser.js"></script>
+		
+		<link rel="import"
+			href="../../polymer/polymer.html">
+		<link rel="import"
+			href="../src/xstream.html">
+		<link rel="import"
+			href="../src/epic-stream-behavior.html">
+	</head>
+
+	<body>
+		<dom-module id="test-checked">
+			<template>
+			</template>
+			<script>
+				HTMLImports.whenReady(function() {
+					Polymer({
+						is: 'test-element',
+						behaviors: [
+							Polymer.EpicStream.Behavior
+						],
+						properties: {
+							prop1: {
+								type: String,
+								value: '',
+								notify: true
+							},
+							prop2: {
+								type: String,
+								value: 'test',
+								notify: true
+							},
+							prop3: {
+								type: Number,
+								value: 5,
+								notify: true,
+							},
+							prop4: {
+								type: Object,
+								value: function() {
+									return {}
+								},
+								notify: true
+							},
+							prop5: {
+								type: Array,
+								value: function() {
+									return []
+								},
+								notify: true
+							},
+							prop6: {
+								type: Boolean,
+								value: false,
+								notify: true
+							}
+						}
+					});
+				});
+			</script>
+		</dom-module>
+		<test-fixture id="basic">
+			<template>
+				<test-element></test-element>
+			</template>
+		</test-fixture>
+
+		<script>
+			suite('EpicStreamBehavior', function() {
+				var element;
+				
+				setup(() => element = fixture('basic'));
+				
+				test('xstreams are working properly', done => {
+					const stream = xs.fromDiagram('--a--b----c----d--e-g--|', );
+					const expected = ['a', 'b', 'c', 'd'];
+
+					let listener = {
+						next: (x) => {
+							assert.equal(x, expected.shift());
+							if (expected.length === 0) {
+								stream.removeListener(listener);
+								done();
+							}
+						},
+					};
+
+					stream.addListener(listener);
+				});
+				
+				suite('createPropertiesStream()', function() {
+					var timeUnit;
+					var values;
+					setup(function() {
+						element = fixture('basic');
+						values = {d: element.properties, e: 'test'};
+						timeUnit = 20;
+					});
+					test('emits elements `properties` object', done => {
+						/**
+						 * Source
+						 *
+						 * xs.of(a,b,a,s,d,d)
+						 * (abasdd|)
+						 * xs.periodic(10)
+						 * -abasdd|
+						 *
+						 * abasdd|
+						 */
+// 						const source = element.createPropertiesStream();
+// 						
+// 						const expected = xs.fromDiagram('abasdd|', {timeUnit});
+
+						
+// 						const time = xs.periodic(timeUnit);
+// 						const actual = source.map(v => xs.of(v).compose(xs.delay(timeUnit))).compose(xs.flattenSequentially);
+// 						const timer = xs.concat(xs
+// 							.periodic(timeUnit)
+// 							.take(7)
+// 							.replaceError(()=>xs.concat(xs
+// 								.of('#'))),xs.of('|'))
+// 							.fold((acc, curr) => acc + curr,'');
+// 						const source = xs
+// 							.of(1,2,3,4,5)
+// 							.map();
+// 						const expected = '-------|'
+
+						const s1 = xs.of('a','b','c','d','e','f').map(v => xs.of(v).compose(xs.delay(timeUnit*2))).compose(xs.flattenSequentially);
+// 						-a-b-c-d-e-f|
+						const s2 = xs.of('u','v','w','x','y','z').map(v => xs.of(v).compose(xs.delay(timeUnit*3))).compose(xs.flattenSequentially);
+// 						--u--v--w--x--y--z|
+						const actual = xs.merge(s1,s2);
+// 						-aub-(cv)-dwe-(fx)--y--z|
+
+						let listener = {
+							next: x => console.log(x),
+							error: err => console.error(err),
+							complete: () => {
+								actual.removeListener(listener);
+// 								expect(x.expected).to.be.equal(x.actual)
+								done();
+							}
+						}
+						
+						diagram(actual).addListener(listener);
+// 						expected.compose(xs.sampleCombine(time)).map(v => ({time:(v[1]+1)*timeUnit,actual:v[0]})).take(6).addListener(listener);
+// 						time.compose(xs.sampleCombine(expected, actual)).map(v => ({time:(v[0]+1)*timeUnit,expected:v[1],actual:v[2]})).take(7).addListener(listener);
+					});
+				});
+			});
+
+
+
+		</script>
+	</body>
+
+</html>

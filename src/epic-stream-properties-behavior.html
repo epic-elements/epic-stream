@@ -1,0 +1,66 @@
+<link rel="import"
+	href="../../polymer/polymer.html">
+<link rel="import"
+	href="xstream.html">
+<script>
+	/**
+	 * Creates an observable stream from Polymer lifecycle callbacks
+	 *
+	 * @polymerBehavior Epic.StreamFromPropertiesBehavior
+	 */
+	Polymer.Epic = Polymer.Epic || {};
+	Polymer.Epic.StreamPropertiesBehavior = {
+		propertyStream: function() {
+			let el$ = xs.of(this);
+			let propsObj$ = el$.map(el => el.properties)
+				.filter(propsObj => propsObj)
+			let behaviorPropsObj$ = el$.map(el => xs.from(el.behaviors))
+				.compose(xs.flattenConcurrently)
+				.map(behavior => behavior.properties);
+			let allPropsObj$ = xs.merge(propsObj$, behaviorPropsObj$)
+				.filter(v => typeof v === 'object')
+				.fold((acc, curr) => Object.assign({}, acc, curr), {});
+			let splitPropObjs$ = allPropsObj$
+				.map(propsObj => xs
+					.from(Object.entries(propsObj)))
+				.compose(xs.flattenConcurrently);
+			let notifyProps$ = splitPropObjs$
+				.filter(entry => entry[1].notify);
+			let propValues$ = notifyProps$
+				.map(entry => entry[0])
+				.map(key => xs
+					.fromEvent(this, `${key.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()}-changed`)
+					.map(e => Object.assign({}, {
+						[key]: e.detail.value
+					}))
+					.startWith(Object.assign({}, {
+						[key]: this.key
+					}))
+					.compose(xs.dropRepeats()))
+				.compose(xs.flattenConcurrently);
+
+			// .map(entry => Object.assign({}, {
+			// 	entry[0]: el.
+			// }))
+			// let notifyProps$ = xs.merge(propsObj$, behaviorPropsObj$)
+			// 	.filter(v => typeof v === 'object')
+			return propValues$;
+			// return xs
+			// 	.of(Object.keys(el.properties))
+			// 	.map(keys => xs
+			// 		.fromArray(keys)
+			// 		
+			// 		.compose(xs.flattenConcurrently)
+			// 		.map(keys.reduce((prev, next) => Object.assign({}, prev, {
+			// 			[next]: el.get(next)
+			// 		}), {}))
+			// 		.startWith(keys.reduce((prev, next) => Object.assign({}, prev, {
+			// 			[next]: el.get(next)
+			// 		}), {})))
+			// 	.compose(xs.flattenConcurrently)
+			// 	.remember()
+
+
+		}
+	};
+</script>

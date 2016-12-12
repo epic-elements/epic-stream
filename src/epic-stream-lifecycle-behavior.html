@@ -1,5 +1,5 @@
 <link rel="import"
-	href="rx.html">
+	href="xstream.html">
 <script>
 	/**
 	 * Creates an observable stream from Polymer lifecycle callbacks
@@ -7,14 +7,8 @@
 	 * @polymerBehavior Epic.StreamFromLifecycleCallbacksBehavior
 	 */
 	Polymer.Epic = Polymer.Epic || {};
-	Polymer.Epic.StreamFromLifecycleCallbacksBehavior = {
-
-		registered: function() {
-			console.log('registered');
-
-		},
+	Polymer.Epic.LifecycleStreamBehavior = {
 		created: function() {
-			console.log('created');
 			// create and dispatch the event
 			var event = new CustomEvent("lifecycle-changed", {
 				detail: {
@@ -24,7 +18,6 @@
 			this.dispatchEvent(event);
 		},
 		ready: function() {
-			console.log('ready');
 			// create and dispatch the event
 			var event = new CustomEvent("lifecycle-changed", {
 				detail: {
@@ -34,8 +27,6 @@
 			this.dispatchEvent(event);
 		},
 		attached: function() {
-			console.log('attached');
-
 			// create and dispatch the event
 			var event = new CustomEvent("lifecycle-changed", {
 				detail: {
@@ -45,8 +36,6 @@
 			this.dispatchEvent(event);
 		},
 		detached: function() {
-			console.log('detached');
-
 			// create and dispatch the event
 			var event = new CustomEvent("lifecycle-changed", {
 				detail: {
@@ -55,8 +44,12 @@
 			});
 			this.dispatchEvent(event);
 		},
-		createStreamFromLifecycleChanges: function() {
-			return xs.fromEvent(this, 'lifecycle-changed');
+		lifecycleStream: function() {
+			return xs
+				.fromEvent(this, 'lifecycle-changed')
+				.map(e => e.detail.value)
+				.compose(xs.dropRepeats())
+				.startWith('');
 		}
 	};
 </script>

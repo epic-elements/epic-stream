@@ -1,28 +1,45 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <title>epic-stream demo</title>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport"
+			content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+		<title>epic-stream demo</title>
 
-    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="../epic-stream.html">
+		<script src="../../webcomponentsjs/webcomponents-lite.js"></script>
 
-    <style is="custom-style" include="demo-pages-shared-styles">
-    </style>
-  </head>
-  <body>
-    <div class="vertical-section-container centered">
-      <h3>Basic epic-stream demo</h3>
-      <demo-snippet>
-        <template>
-          <epic-stream></epic-stream>
-        </template>
-      </demo-snippet>
-    </div>
-  </body>
+		<link rel="import"
+			href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+		<link rel="import"
+			href="../../iron-demo-helpers/demo-snippet.html">
+		<link rel="import"
+			href="../src/xstream.html">
+		<!-- <link rel="import"
+			href="../src/epic-stream.html"> -->
+		<link rel="import"
+			href="../src/epic-stream-diagram.html">
+		<style is="custom-style"
+			include="demo-pages-shared-styles">
+
+		</style>
+	</head>
+
+	<body>
+		<div class="vertical-section-container centered">
+			<h3>Basic epic-stream demo</h3>
+			<demo-snippet>
+				<template>
+					<epic-stream-diagram></epic-stream-diagram>
+					<script>
+						const testStream$ = xs.fromDiagram('-a-b-c-d-e-f-g-h->', {timeUnit:20});
+						const diagram = document.querySelector('epic-stream-diagram');
+						diagram.source = testStream$;
+					</script>
+				</template>
+			</demo-snippet>
+		</div>
+	</body>
+
 </html>

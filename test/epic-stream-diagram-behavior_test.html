@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport"
+			content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+		<title>epic-stream test</title>
+
+		<script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+		<script src="../../web-component-tester/browser.js"></script>
+
+		<link rel="import"
+			href="../../polymer/polymer.html">
+		<link rel="import"
+			href="../src/xstream.html">
+		<link rel="import"
+			href="../src/epic-stream-diagram-behavior.html">
+	</head>
+
+	<body>
+
+
+		<dom-module id="test-checked">
+			<template>
+				<div id="wrapper"></div>
+			</template>
+			<script>
+				HTMLImports.whenReady(function() {
+					Polymer({
+						is: 'epic-stream',
+						behaviors: [
+							Polymer.EpicStream.DiagramBehavior
+						],
+						properties: {
+							prop1: {
+								type: String,
+								value: '',
+								notify: true
+							},
+							prop2: {
+								type: String,
+								value: 'test',
+								notify: true
+							},
+							prop3: {
+								type: Number,
+								value: 5,
+								notify: true,
+							},
+							prop4: {
+								type: Object,
+								value: function() {
+									return {}
+								},
+								notify: true
+							},
+							prop5: {
+								type: Array,
+								value: function() {
+									return []
+								},
+								notify: true
+							},
+							prop6: {
+								type: Boolean,
+								value: false,
+								notify: true
+							}
+						},
+
+					});
+
+
+				});
+			</script>
+		</dom-module>
+
+		<test-fixture id="basic">
+			<template>
+				<epic-stream></epic-stream>
+			</template>
+		</test-fixture>
+
+		<script>
+			suite('DiagramBehavior', function() {
+				var element;
+				var method;
+
+				setup(() => {
+					element = fixture('basic')
+					replace('epic-stream').with('fake-epic-stream');
+				});
+
+				test('state$ to be valid', done => {
+
+				});
+				// test('state$ emits is valid `timeUnit` value', () => {
+				// 	expect(timeUnit).to.be.an.integer;
+				// 	expect(timeUnit).to.be.not.empty;
+				// });
+				// test('state$ emits a valid `values` value', () => {
+				// 	expect(values).to.be.an('object');
+				// 	expect(values).to.not.be.empty;
+				// });
+				// test('minLength$ is an integer');
+				// test('maxLength$ is an integer');
+
+
+			});
+		</script>
+	</body>
+
+</html>

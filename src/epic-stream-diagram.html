@@ -1,0 +1,266 @@
+<link rel="import"
+	href="../../polymer/polymer.html">
+<link rel="import"
+	href="../../epic-polyfills/babel-polyfill.html">
+<link rel="import"
+	href="epic-stream-behavior.html">
+
+<!--
+`epic-location`
+watches address bar for changes
+
+@demo demo/index.html
+-->
+
+<dom-module id="epic-stream-diagram">
+	<template>
+		<h2>Stream Diagram</h2>
+		<div>-----</div>
+	</template>
+	<script>
+		Polymer({
+			is: 'epic-stream-diagram',
+			behaviors: [Polymer.EpicStream.Behavior],
+			properties: {
+				_lifecycle: {
+					type: String,
+					notify: true,
+					readOnly: true
+				},
+				timeUnit: {
+					type: Number,
+					notify: true
+				},
+				values: {
+					type: Object,
+					notify: true
+				},
+				source: {
+					type: Object,
+					notify: true
+				},
+				frames: {
+					type: Object,
+					notify: true
+				}
+			},
+			ready: function() {
+				this._set_lifecycle('ready');
+
+				//-0-1-2-3-4-5-6-7-8-9->
+				//-x--x----x---x----x-->
+				//-0--1----4---6----8-->
+					
+				//-0-1-2-3-4-5-6-7-8-9->
+				//-a-a-a-a-a-a-a-a-a-a-> 
+				
+
+				const lifecycleChange$ = xs.fromEvent(this, '_lifecycle-changed')
+					.map(e=>e.detail.value)
+					.startWith(this._lifecycle)
+					.startWith('created')
+					.filter(v=>v);
+
+				const timeUnitChange$ = xs.fromEvent(this, 'time-unit-changed')
+					.map(e=>e.detail.value)
+					.startWith(this.timeUnit)
+					.startWith(20)
+					.filter(v=>v)
+					.compose(xs.dropRepeats())
+					.remember()
+					.debug('timeUnitChange$');
+
+				const valuesChange$ = xs.fromEvent(this, 'values-changed')
+					.map(e=>e.detail.value)
+					.startWith(this.values)
+					.startWith({})
+					.filter(v=>v);
+
+				const sourceChange$ = xs.fromEvent(this, 'source-changed')
+					.map(e=>e.detail.value)
+					.startWith(this.source)
+					.filter(v=>v)
+					.remember();
+
+				const index$ = timeUnitChange$					// o|
+					.map(timeUnit => xs
+						.periodic(timeUnit))
+					.flatten()
+					.map(i=>i+1)
+					.startWith(0)
+
+
+				const frames$ = index$
+					.fold((x,y)=>Object.assign({},{[x]:x}),{})
+					.remember()
+					.debug('emptyFrames$');
+
+				const eventFrames$ = sourceChange$						// -x--x----x---x----x-->
+					.flatten()											
+					.remember()
+					.compose(xs											// -a-b-c-d-e-b-g-h-i-j->
+						.sampleCombine(index$, frames$))					// -a--b----e---g----i-->
+					.map(v=>Object.assign({}, {index:v[1],value:v[0]}))
+
+
+				
+
+					
+// 				const emptyFrames$ = time$
+// 					.map(v=>Object.assign({}, v, ))
+// 					.fold((x,y)=>object.assign({}, x, y), {});
+// 					.debug('time$');
+				
+
+				
+					
+
+
+				
+				
+				
+
+
+// 				const emptyFrames$ = frameChange$
+// 					.fold((x,y)=>Object.assign({}, x, {[y.frame]:y}), {});
+
+// 				const frames$ = eventFrames$
+// 					.compose(xs											// -a-b-c-d-e-b-g-h-i-j->
+// 						.sampleCombine(emptyFrames$))
+// 						.map(v=>Object.assign({}, v[1], v[0]))
+// 						.fold((x,y)=>Object.assign({}, x, {[y.frame]:y}), {});
+
+
+					
+
+				
+
+
+				
+				
+
+// 				const frames$ = time$
+// 					.map(v => new Array(v).fill('-'))
+// 					.compose(xs
+// 						.sampleCombine(eventFrames$))
+// 					.map(v=>v[0].concat(v[1]))
+
+
+				const state$ = xs
+					.combine(
+						lifecycleChange$,
+						sourceChange$,
+						timeUnitChange$,
+						valuesChange$,
+						index$,
+						eventFrames$)
+					.map(v=>({
+						lifecycle: v[0],
+						source: v[1],
+						timeUnit: v[2],
+						values: v[3],
+						index: v[4],
+						eventFrames: v[5]
+					}))
+					.startWith({})
+					.remember();
+
+
+// 					const source$ = 
+
+
+				
+
+				
+
+			
+
+
+
+				
+				
+
+
+
+
+// 				const source$ = xs.of(this.source);
+	
+
+				// const timeUnit$ = xs.fromEvent(this, 'time-unit-changed')
+				// 	.startWith(this.timeUnit);
+				// const source$ = xs.fromEvent(this, 'source-changed')
+				// 	.startWith(this.source);
+				// const frame$ = timeUnit$
+				// 	.map(v => xs.periodic(v))
+				// 	.flatten()
+				// 	.map(v => v + 1)
+				// 	.take(10);
+				// const time$ = frame$.map(v => v * 20);
+				// const frameGraph$ = frame$
+				// 	.fold((x, y) => x.concat([y]), [])
+				// 	.map(v => v.join(''));
+				// const timeGraph$ = time$
+				// 	.fold((x, y) => x.concat([y]), [])
+				// 	.map(v => v.join(''));
+				// const emptyFrameGraph$ = frameGraph$
+				// 	.map(v => '-')
+				// 	.fold((x, y) => x.concat([y]), [])
+				// 	.map(v => v.join(''));
+				// const state$ = xs.combine(timeGraph$, time$, frameGraph$, timeUnit$, frame$, emptyFrameGraph$)
+				// 	.map(v => ({
+				// 		timeUnit: v[3],
+				// 		time: v[1],
+				// 		timeGraph: v[0],
+				// 		frame: v[4],
+				// 		frameGraph: v[2],
+				// 		emptyFramesGraph: v[5]
+				// 	}))
+				// 	.remember();
+
+				// const source$ = xs
+				// 	.fromEvent(this, 'source-changed')
+				// 	.map(e => e.target.value);
+				// const event$ = source$
+				// 	.compose(xs
+				// 		.sampleCombine(time$))
+				// 	.map(v => ({
+				// 		[v[1]]: v[0]
+				// 	}))
+				// 
+
+				// 
+
+
+
+				
+
+				const attached$ = state$.filter(v=>v.lifecycle === 'attached').take(100);
+
+				const detatched$ = state$.filter(v=>v.lifecycle === 'detached');
+
+				const listener = {
+					next: x => console.log(x)
+				}
+
+				attached$.map(v=>v.eventFrames).addListener(listener);
+
+
+			},
+			attached: function() {
+				this._set_lifecycle('attached');
+// 				this.listener = {
+// 					next: x => {
+// 						this._set_timeGraph.set(x.timeGraph)
+// 						this._set_frameGraph.set(x.frameGraph)
+// 						this._set_emptyFramesGraph.set(x.emptyFrameGraph)
+// 					}
+// 				}
+// 				this.state$.addListener(this.listener);
+			},
+			detached: function() {
+				this._set_lifecycle('attached');
+// 				this.state$.removeListener(this.listener);
+			}
+		})
+	</script>
+</dom-module>
