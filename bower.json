@@ -5,7 +5,8 @@
   "dependencies": {
     "polymer": "Polymer/polymer#^1.4.0",
     "epic-polyfills": "epic-elements/epic-polyfills",
-    "Rx": "https://unpkg.com/@reactivex/rxjs/dist/global/Rx.js"
+    "Rx": "https://unpkg.com/@reactivex/rxjs/dist/global/Rx.js",
+    "most": "~1.2.1"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
